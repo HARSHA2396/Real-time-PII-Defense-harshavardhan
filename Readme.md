@@ -62,7 +62,7 @@ The following should NOT be marked as PII:
 
 ##  Deployment Strategy
 
-We propose deploying our PII Detection solution as an **API Gateway Plugin**.
+I propose deploying our PII Detection solution as an **API Gateway Plugin**.
 
 ###  Why API Gateway?
 - **Scalability** → Works before traffic hits the application, ensuring centralized PII filtering.  
