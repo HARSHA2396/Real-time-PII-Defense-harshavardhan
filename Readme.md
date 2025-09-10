@@ -14,7 +14,7 @@ The final output is a CSV file containing:
 ### A. PII (Standalone)
 These attributes are always considered PII when present:
 - **Phone Number** → Any 10-digit number.  
-- **Aadhar Card Number** → 12-digit number (e.g., `123456789012`).  
+- **Aadhar Card Number** → 12-digit number (e.g., `113243456789`).  
 - **Passport Number** → Alphanumeric (e.g., `P1234567`).  
 - **UPI ID** → e.g., `user@upi`, `9876543210@ybl`.
 
@@ -27,7 +27,7 @@ These become PII **only when combined** in the same record:
 
 ### C. Non-PII (Avoid False Positives)
 The following should NOT be marked as PII:
-- First name or last name alone (`"John"`, `"Smith"`).  
+- First name or last name alone (`"Harsha"`, `"Vardhan"`).  
 - Email alone without other combinatorial attributes.  
 - City, state, or pin code standalone.  
 - Transaction ID, Order ID, Product Description.  
@@ -49,7 +49,7 @@ The following should NOT be marked as PII:
 
 3. **Redaction Strategy**  
    - Phone → `98XXXXXX10`  
-   - Aadhar → `XXXXXXXX9012`  
+   - Aadhar → `XXXXXXXXXXXX`  
    - Email → `jXXX@domain.com`  
    - IP → `192.168.1.XXX`  
    - UUID/MAC → masked middle portions  
@@ -105,6 +105,6 @@ This ensures:
 
 - **Python File** → `detector_harshavardhan.py`  
 - **Generated Output** → `redacted_output.csv`  
-- **Execution Command**: python detector_harshavardhan.py iscp_pii_dataset_-_Sheet1.csv redacted_output.csv
+- **Execution Command**: 'python detector_harshavardhan.py iscp_pii_dataset_-_Sheet1.csv redacted_output.csv'
 
 
