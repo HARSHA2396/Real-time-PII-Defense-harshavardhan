@@ -3,9 +3,7 @@ import json
 import pandas as pd
 import sys
 
-# -------------------------------
-# Step 1: Define PII keywords
-# -------------------------------
+
 PII_KEYWORDS = {
     "name", "first_name", "last_name", "fullname",
     "email", "phone", "mobile", "contact",
@@ -14,9 +12,7 @@ PII_KEYWORDS = {
     "device_id", "imei", "uuid", "mac", "ip", "advertising_id"
 }
 
-# -------------------------------
-# Step 2: Define regex patterns
-# -------------------------------
+
 PII_PATTERNS = {
     "phone": re.compile(r"\b\d{10}\b"),
     "email": re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"),
@@ -26,10 +22,6 @@ PII_PATTERNS = {
     "uuid": re.compile(r"\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b")
 }
 
-# -------------------------------
-# Step 3: Functions
-# -------------------------------
-
 def contains_pii(record: dict) -> bool:
     """
     Check if JSON record contains PII.
@@ -38,11 +30,9 @@ def contains_pii(record: dict) -> bool:
         key_lower = key.lower()
         val_str = str(value)
 
-        # If key name itself is sensitive
         if key_lower in PII_KEYWORDS:
             return True
 
-        # If value matches regex pattern
         for _, pattern in PII_PATTERNS.items():
             if pattern.search(val_str):
                 return True
@@ -56,33 +46,27 @@ def redact_value(value: str) -> str:
     """
     val_str = str(value)
 
-    # Phone number
     if re.fullmatch(PII_PATTERNS["phone"], val_str):
         return val_str[:2] + "XXXXXX" + val_str[-2:]
 
-    # Aadhaar
     if re.fullmatch(PII_PATTERNS["aadhar"], val_str):
         return "XXXXXXXX" + val_str[-4:]
 
-    # Email
     if re.fullmatch(PII_PATTERNS["email"], val_str):
         user, domain = val_str.split("@")
         return user[0] + "XXX@" + domain
 
-    # IP address
     if re.fullmatch(PII_PATTERNS["ip"], val_str):
         parts = val_str.split(".")
         return ".".join(parts[:3] + ["XXX"])
 
-    # UUID
     if re.fullmatch(PII_PATTERNS["uuid"], val_str):
         return val_str[:8] + "-XXXX-XXXX-XXXX-" + val_str[-12:]
 
-    # MAC address
     if re.fullmatch(PII_PATTERNS["mac"], val_str):
         return val_str[:9] + "XX:XX:XX"
 
-    # Device IDs / misc
+
     if any(k in val_str.lower() for k in ["dev", "imei", "uuid", "mac"]):
         return val_str[:3] + "XXXXX" + val_str[-2:]
 
@@ -103,13 +87,10 @@ def redact_record(record: dict) -> dict:
     return redacted
 
 
-# -------------------------------
-# Step 4: Main
-# -------------------------------
+
 def main(input_file: str, output_file: str):
     df = pd.read_csv(input_file)
 
-    # Handle both possible JSON column names
     if "data_json" in df.columns:
         json_col = "data_json"
     elif "Data_json" in df.columns:
@@ -144,9 +125,6 @@ def main(input_file: str, output_file: str):
     print(f"[+] Output saved to {output_file}")
 
 
-# -------------------------------
-# Entry Point
-# -------------------------------
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python detector_full_candidate_name.py <input_csv> <output_csv>")
